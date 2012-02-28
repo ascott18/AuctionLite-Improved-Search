@@ -1,0 +1,21 @@
+﻿## Interface: 40300
+## Title: AuctionLite: Advanced Search
+## Version: 1.0
+## Author: Cybeloras of Mal'Ganis
+## Notes: Provides advanced search capabilities to AuctionLite
+
+## LoadWith: AuctionLite
+
+Locale\enUS.lua
+Locale\deDE.lua
+Locale\esES.lua
+Locale\esMX.lua
+Locale\frFR.lua
+Locale\koKR.lua
+Locale\ruRU.lua
+Locale\zhCN.lua
+Locale\zhTW.lua
+Locale\ptBR.lua
+
+AuctionLite_AdvSearch.xml
+AuctionLite_AdvSearch.lua
