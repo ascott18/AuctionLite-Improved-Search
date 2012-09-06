@@ -1,9 +1,10 @@
-﻿## Interface: 40300
+﻿## Interface: 50001
 ## Title: AuctionLite: Advanced Search
-## Version: 1.0
-## Author: Cybeloras of Mal'Ganis
+## Version: 1.1
+## Author: Cybeloras of Detheroc/Mal'Ganis
 ## Notes: Provides advanced search capabilities to AuctionLite
 
+## RequiredDeps: AuctionLite
 ## LoadWith: AuctionLite
 
 Locale\enUS.lua
