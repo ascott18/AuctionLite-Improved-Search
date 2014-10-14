@@ -107,7 +107,8 @@ function QueryAuctionItems(...)
 				Query.page, 
 				AdvSearch.Usable, 
 				AdvSearch.Quality, 
-				canGetAll and Query.getAll
+				canGetAll and Query.getAll,
+				Query.exact
 			)
 		else
 			oldQueryAuctionItems(...)

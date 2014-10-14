@@ -27,7 +27,9 @@ Leave blank to search for all items that fit the current filters.]]
 L["QUANTITY"] = "Quantity"
 L["QUANTITY_DESC"] = "Choose the amount of the item that you would like to buy."
 L["SEARCH"] = "Search"
-L["SEARCH_DESC"] = "Click to search the auction house using the filters that you have set."
+L["SEARCH_DESC"] = [[Click to search the auction house using the filters that you have set.
+
+Hold the Shift key when clicking to force the name searched for to match exactly.]]
 L["FULLSCAN"] = "Full Scan"
 L["FULLSCAN_DESC"] = [[Click to do a full scan of all items in the auction house.
 
