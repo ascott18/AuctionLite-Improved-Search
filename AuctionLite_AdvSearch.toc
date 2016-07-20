@@ -1,8 +1,8 @@
-﻿## Interface: 60000
+﻿## Interface: 70000
 ## X-Compatible-With: 50400
 ## Title: AuctionLite: Advanced Search
-## Version: 1.3
-## Author: Cybeloras of Detheroc/Mal'Ganis
+## Version: 1.4
+## Author: Cybeloras of Aerie Peak
 ## Notes: Provides advanced search capabilities to AuctionLite
 
 ## RequiredDeps: AuctionLite

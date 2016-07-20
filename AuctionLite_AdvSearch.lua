@@ -96,19 +96,17 @@ function QueryAuctionItems(...)
 				-- local MAX_QUERY_BYTES = 63
 				name = AuctionLite:Truncate(name, 63)
 			end
-	  
+
 			oldQueryAuctionItems(
 				name, 
 				AdvSearch.Min, 
 				AdvSearch.Max, 
-				AdvSearch.Type, 
-				AdvSearch.Cat, 
-				AdvSearch.SubCat, 
 				Query.page, 
 				AdvSearch.Usable, 
 				AdvSearch.Quality, 
 				canGetAll and Query.getAll,
-				Query.exact
+				Query.exact,
+				AdvSearch.FilterCat.filters
 			)
 		else
 			oldQueryAuctionItems(...)
@@ -172,10 +170,6 @@ TT(BuyMaxLevel, "LEVEL_MAX", "LEVEL_MAX_DESC")
 TT(BuyResetButton, "RESET", "RESET_DESC")
 TT(BuyAdvancedButton, "ADVANCED", "ADVANCED_DESC")
 
-local categories = {}
-for i=1, select("#", GetAuctionItemClasses()) do
-   categories[i] = select(i, GetAuctionItemClasses())
-end
 
 local function AddDropdownSpacer()
 	local info = UIDropDownMenu_CreateInfo()
@@ -203,20 +197,22 @@ local function Dropdown(self, level)
 		AddDropdownSpacer()
 		
 		--add the actual categories themselves
-		for categoryIndex, category in pairs(categories) do
-			local info = UIDropDownMenu_CreateInfo()
-			info.text = category
-			info.value = categoryIndex
-			info.hasArrow = select("#", GetAuctionItemSubClasses(categoryIndex)) > 0
-			info.checked = AdvSearch.Cat == categoryIndex
-			info.func = function()
-				AdvSearch.Cat = categoryIndex
-				AdvSearch.SubCat = nil
-				AdvSearch.Type = nil
-				UIDropDownMenu_SetText(BuyCategoryDropdown, category)
-				CloseDropDownMenus()
+		for categoryIndex, category in pairs(AuctionCategories) do
+			if not category.flags or not category.flags.WOW_TOKEN_FLAG then
+				local info = UIDropDownMenu_CreateInfo()
+				info.text = category.name
+				info.value = categoryIndex
+				info.hasArrow = not not category.subCategories
+				info.checked = AdvSearch.FilterCat == category
+				or AdvSearch.FilterCat and (AdvSearch.FilterCat.parent and (AdvSearch.FilterCat.parent == category or 
+				    (AdvSearch.FilterCat.parent.parent and AdvSearch.FilterCat.parent.parent == category)))
+				info.func = function()
+					AdvSearch.FilterCat = category
+					UIDropDownMenu_SetText(BuyCategoryDropdown, category.name)
+					CloseDropDownMenus()
+				end
+				UIDropDownMenu_AddButton(info, level)
 			end
-			UIDropDownMenu_AddButton(info, level)
 		end
 		
 		AddDropdownSpacer()
@@ -231,9 +227,7 @@ local function Dropdown(self, level)
 		
 		info.hasArrow = false
 		info.func = function()
-			AdvSearch.Cat = nil
-			AdvSearch.SubCat = nil
-			AdvSearch.Type = nil
+			AdvSearch.FilterCat = nil
 			UIDropDownMenu_SetText(BuyCategoryDropdown, L["CATEGORY"])
 			BuyCategoryDropdownQualText:SetText(L["RARITY_LABEL"]:format(ALL))
 			CloseDropDownMenus()
@@ -274,28 +268,23 @@ local function Dropdown(self, level)
 		end
 		
 		--populates the category menus with subcategories
-		for categoryIndex in pairs(categories) do
-			if UIDROPDOWNMENU_MENU_VALUE == categoryIndex then
-				for subCatIndex = 1, select("#", GetAuctionItemSubClasses(categoryIndex)) do
-					local subCat = select(subCatIndex, GetAuctionItemSubClasses(categoryIndex))
-					
+		for categoryIndex, category in ipairs(AuctionCategories) do
+			if UIDROPDOWNMENU_MENU_VALUE == categoryIndex and category.subCategories then
+				for subCatIndex, subCat in pairs(category.subCategories) do					
 					local info = UIDropDownMenu_CreateInfo()
-					info.text = subCat
-					info.value = subCatIndex
+					info.text = subCat.name
+					info.value = subCat
 					info.checked = (
-						AdvSearch.Cat == categoryIndex and
-						AdvSearch.SubCat == subCatIndex
+						AdvSearch.FilterCat == subCat or (AdvSearch.FilterCat and AdvSearch.FilterCat.parent and (AdvSearch.FilterCat.parent == subCat))
 					)
 					info.func = function()
-						AdvSearch.Cat = categoryIndex
-						AdvSearch.SubCat = subCatIndex
-						AdvSearch.Type = nil
-						UIDropDownMenu_SetText(BuyCategoryDropdown, subCat)
+						AdvSearch.FilterCat = subCat
+						UIDropDownMenu_SetText(BuyCategoryDropdown, subCat.name)
 						CloseDropDownMenus()
 					end
 					
-					-- true if the category is armor and subcat is misc, cloth, leather, mail, plate
-					info.hasArrow = categoryIndex == 2 and subCatIndex < 6
+					-- true if the category is armor and subCat is misc, cloth, leather, mail, plate
+					info.hasArrow = not not subCat.subCategories
 					
 					UIDropDownMenu_AddButton(info, level)
 				end
@@ -304,33 +293,19 @@ local function Dropdown(self, level)
 		
 	elseif level == 3 then
 		--populates the sub-sub category menus of armor types that have sub-subcategories
-		for categoryIndex in pairs(categories) do
-			for subCatIndex = 1, select("#", GetAuctionItemSubClasses(categoryIndex)) do
-				if UIDROPDOWNMENU_MENU_VALUE == subCatIndex and categoryIndex == 2 and subCatIndex < 6 then
-					for subSubTypeIndex = 1, select("#", GetAuctionInvTypes(categoryIndex, subCatIndex)), 2 do
-						local subSubTypeToken, subSubTypeShouldDisplay = select(subSubTypeIndex, GetAuctionInvTypes(categoryIndex, subCatIndex))
-						if subSubTypeShouldDisplay then
-							local info = UIDropDownMenu_CreateInfo()
-							info.text = _G[subSubTypeToken]
-							info.checked = (
-								AdvSearch.Cat == categoryIndex and 
-								AdvSearch.SubCat == subCatIndex and 
-								AdvSearch.Type == (subSubTypeIndex+1)/2
-							)
-							info.func = function()
-								AdvSearch.Cat = categoryIndex
-								AdvSearch.SubCat = subCatIndex
-								AdvSearch.Type = (subSubTypeIndex+1)/2
-								
-								local subCat = select(subCatIndex, GetAuctionItemSubClasses(categoryIndex))
-								UIDropDownMenu_SetText(BuyCategoryDropdown, subCat .. " " .._G[subSubTypeToken])
-								CloseDropDownMenus()
-							end
-							UIDropDownMenu_AddButton(info, level)
-						end
-					end
-				end
+		for subSubCatIndex, subSubCat in ipairs(UIDROPDOWNMENU_MENU_VALUE.subCategories) do
+			local info = UIDropDownMenu_CreateInfo()
+			info.text = subSubCat.name
+			info.checked = (
+				AdvSearch.FilterCat == subSubCat
+			)
+			info.func = function()
+				AdvSearch.FilterCat = subSubCat
+				
+				UIDropDownMenu_SetText(BuyCategoryDropdown, subSubCat.parent.name .. " " .. subSubCat.name)
+				CloseDropDownMenus()
 			end
+			UIDropDownMenu_AddButton(info, level)
 		end
 	end
 end
