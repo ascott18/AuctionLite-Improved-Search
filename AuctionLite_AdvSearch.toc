@@ -1,5 +1,4 @@
 ﻿## Interface: 70000
-## X-Compatible-With: 50400
 ## Title: AuctionLite: Advanced Search
 ## Version: 1.4
 ## Author: Cybeloras of Aerie Peak
