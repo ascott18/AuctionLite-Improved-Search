@@ -106,7 +106,7 @@ function QueryAuctionItems(...)
 				AdvSearch.Quality, 
 				canGetAll and Query.getAll,
 				Query.exact,
-				AdvSearch.FilterCat.filters
+				AdvSearch.FilterCat and AdvSearch.FilterCat.filters or nil
 			)
 		else
 			oldQueryAuctionItems(...)
