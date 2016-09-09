@@ -41,7 +41,7 @@
 					</Layer>
 				</Layers>
 			</Frame>
-			<EditBox name="BuyMinLevel" letters="2" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
+			<EditBox name="BuyMinLevel" letters="3" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
 				<Size x="24" y="16"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="BuyCategoryDropdown" relativePoint="RIGHT" x="-6" y="3"/>
@@ -82,7 +82,7 @@
 					</OnChar>
 				</Scripts>
 			</EditBox>
-			<EditBox name="BuyMaxLevel" letters="2" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
+			<EditBox name="BuyMaxLevel" letters="3" numeric="true" autoFocus="false" inherits="InputBoxTemplate">
 				<Size x="24" y="16"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="BuyMinLevel" relativePoint="RIGHT" x="12"/>
