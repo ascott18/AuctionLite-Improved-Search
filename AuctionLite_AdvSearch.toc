@@ -1,6 +1,6 @@
-﻿## Interface: 70000
+﻿## Interface: 80000
 ## Title: AuctionLite: Advanced Search
-## Version: 1.5.1
+## Version: 1.5.2
 ## Author: Cybeloras of Aerie Peak
 ## Notes: Provides advanced search capabilities to AuctionLite
 
