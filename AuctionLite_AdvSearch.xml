@@ -22,8 +22,8 @@
 				</Layers>
 				<Scripts>
 					<OnClick>
-						PlaySound("igMainMenuOptionCheckBoxOn");
 						AuctionLite_AdvSearch.Usable = self:GetChecked();
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
 					</OnClick>
 				</Scripts>
 			</CheckButton>
